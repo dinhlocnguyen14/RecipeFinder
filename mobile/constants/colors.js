@@ -86,19 +86,6 @@ const roseGoldTheme = {
   shadow: "#000000",
 };
 
-const orangeTheme = {
-  primary: "#F58C1F",
-  background: "#FFFFFF",
-  text: "#1A1A1A",
-  border: "#EEEEEE",
-  white: "#FFFFFF",
-  textLight: "#757575",
-  card: "#FFFFFF",
-  shadow: "#000000",
-  accent: "#4CAF50",
-  heart: "#FF5252",
-};
-
 export const THEMES = {
   coffee: coffeeTheme,
   forest: forestTheme,
@@ -108,8 +95,7 @@ export const THEMES = {
   mint: mintTheme,
   midnight: midnightTheme,
   roseGold: roseGoldTheme,
-  orange: orangeTheme,
 };
 
 // 👇 change this to switch theme
-export const COLORS = THEMES.orange;
+export const COLORS = THEMES.purple;

@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
-import { COLORS } from "../../constants/colors";
+import { COLORS } from "../../constants/colors.js";
 
 const { height } = Dimensions.get("window");
 
@@ -17,25 +17,24 @@ export const authStyles = StyleSheet.create({
     paddingTop: 40,
   },
   imageContainer: {
-    height: height * 0.25,
-    marginBottom: 20,
+    height: height * 0.3,
+    marginBottom: 30,
     justifyContent: "center",
     alignItems: "center",
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 320,
+    height: 320,
   },
   title: {
-    fontSize: 32,
-    fontFamily: "Outfit_700Bold",
+    fontSize: 28,
+    fontWeight: "bold",
     color: COLORS.text,
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 40,
   },
   subtitle: {
     fontSize: 16,
-    fontFamily: "Inter_400Regular",
     color: COLORS.textLight,
     textAlign: "center",
     marginBottom: 30,

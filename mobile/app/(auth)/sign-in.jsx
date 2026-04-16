@@ -15,7 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 // import { Image } from "expo-image";
 import { Image } from "react-native";
 import React from "react";
-import { authStyles } from "../../assets/styles/auth.style";
+import { authStyles } from "../../assets/styles/auth.styles";
 import { COLORS } from "../../constants/colors";
 
 const SignInScreen = () => {
@@ -48,11 +48,11 @@ const SignInScreen = () => {
         await setActive({ session: signInAttempt.createdSessionId });
       } else {
         Alert.alert("Error", "Sign in failed. Please try again.");
-        console.warn(JSON.stringify(signInAttempt, null, 2));
+        console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (err) {
       Alert.alert("Error", err.errors?.[0]?.message || "Sign in failed");
-      console.warn(JSON.stringify(err, null, 2));
+      console.error(JSON.stringify(err, null, 2));
     } finally {
       setLoading(false);
     }
@@ -71,14 +71,13 @@ const SignInScreen = () => {
         >
           <View style={authStyles.imageContainer}>
             <Image
-              source={require("../../assets/images/logo.png")}
+              source={require("../../assets/images/i1.png")}
               style={authStyles.image}
-              resizeMode="contain"
+              contentFit="contain"
             />
           </View>
 
           <Text style={authStyles.title}>Welcome Back</Text>
-          <Text style={authStyles.subtitle}>Sign in to continue your culinary journey</Text>
 
           {/* FORM CONTAINER */}
           <View style={authStyles.formContainer}>
@@ -131,25 +130,6 @@ const SignInScreen = () => {
                 {loading ? "Signing In..." : "Sign In"}
               </Text>
             </TouchableOpacity>
-
-            {/* Separator */}
-            <View style={{ flexDirection: "row", alignItems: "center", marginVertical: 20 }}>
-              <View style={{ flex: 1, height: 1, backgroundColor: COLORS.border }} />
-              <Text style={{ marginHorizontal: 10, color: COLORS.textLight, fontFamily: "Inter_400Regular" }}>or continue with</Text>
-              <View style={{ flex: 1, height: 1, backgroundColor: COLORS.border }} />
-            </View>
-
-            {/* Social Buttons */}
-            <View style={{ flexDirection: "row", gap: 16, marginBottom: 30 }}>
-              <TouchableOpacity style={{ flex: 1, height: 56, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border, justifyContent: "center", alignItems: "center", flexDirection: "row", gap: 8 }}>
-                <Ionicons name="logo-google" size={20} color={COLORS.text} />
-                <Text style={{ fontFamily: "Inter_600SemiBold", color: COLORS.text }}>Google</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={{ flex: 1, height: 56, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border, justifyContent: "center", alignItems: "center", flexDirection: "row", gap: 8 }}>
-                <Ionicons name="logo-apple" size={22} color={COLORS.text} />
-                <Text style={{ fontFamily: "Inter_600SemiBold", color: COLORS.text }}>Apple</Text>
-              </TouchableOpacity>
-            </View>
 
             {/* Sign Up Link */}
             <TouchableOpacity

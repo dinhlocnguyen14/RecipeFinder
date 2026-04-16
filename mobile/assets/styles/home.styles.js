@@ -14,56 +14,39 @@ export const homeStyles = StyleSheet.create({
   },
   welcomeSection: {
     paddingHorizontal: 20,
-    paddingTop: 24,
+    paddingTop: 20,
     paddingBottom: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
   welcomeText: {
-    fontSize: 28,
-    fontFamily: "Outfit_700Bold",
+    fontSize: 32,
+    fontWeight: "800",
     color: COLORS.text,
     letterSpacing: -0.5,
   },
-  profileButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: COLORS.primary + "15",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: COLORS.primary + "20",
-  },
-  searchContainer: {
+  featuredSection: {
     paddingHorizontal: 20,
     marginBottom: 24,
   },
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 30,
-    paddingHorizontal: 16,
-    height: 56,
-  },
-  searchPlaceholder: {
-    marginLeft: 12,
-    fontSize: 16,
-    fontFamily: "Inter_400Regular",
-    color: COLORS.textLight,
-    flex: 1,
-  },
-  featuredSection: {
-    paddingHorizontal: 20,
-    marginBottom: 28,
-  },
   featuredCard: {
-    borderRadius: 32,
+    borderRadius: 24,
     overflow: "hidden",
     backgroundColor: COLORS.card,
-    height: 200,
+    shadowColor: COLORS.shadow,
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  featuredImageContainer: {
+    height: 240,
+    backgroundColor: COLORS.primary,
+    position: "relative",
   },
   featuredImage: {
     width: "100%",
@@ -71,129 +54,37 @@ export const homeStyles = StyleSheet.create({
   },
   featuredOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.25)",
-    padding: 24,
-    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "space-between",
+    padding: 20,
   },
-  featuredTag: {
-    backgroundColor: "rgba(255,255,255,0.2)",
+  featuredBadge: {
+    backgroundColor: COLORS.primary,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     alignSelf: "flex-start",
-    marginBottom: 8,
   },
-  featuredTagText: {
+  featuredBadgeText: {
     color: COLORS.white,
     fontSize: 12,
-    fontFamily: "Inter_600SemiBold",
+    fontWeight: "600",
+  },
+  featuredContent: {
+    justifyContent: "flex-end",
   },
   featuredTitle: {
     fontSize: 24,
-    fontFamily: "Outfit_700Bold",
+    fontWeight: "800",
     color: COLORS.white,
-    lineHeight: 30,
+    marginBottom: 12,
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
-  sectionHeader: {
+  featuredMeta: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontFamily: "Outfit_700Bold",
-    color: COLORS.text,
-  },
-  seeAllText: {
-    fontSize: 14,
-    fontFamily: "Inter_600SemiBold",
-    color: COLORS.primary,
-  },
-  categoryFilterContainer: {
-    marginBottom: 20,
-  },
-  categoryFilterScrollContent: {
-    paddingHorizontal: 20,
-    gap: 12,
-  },
-  categoryButton: {
-    backgroundColor: "#F5F5F5",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: "transparent",
-  },
-  selectedCategory: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontFamily: "Inter_600SemiBold",
-    color: COLORS.textLight,
-  },
-  selectedCategoryText: {
-    color: COLORS.white,
-  },
-  recipesSection: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  row: {
-    justifyContent: "space-between",
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingVertical: 64,
-  },
-});
-
-export const recipeCardStyles = StyleSheet.create({
-  container: {
-    width: cardWidth,
-    backgroundColor: COLORS.card,
-    borderRadius: 24,
-    marginBottom: 20,
-    overflow: "hidden",
-  },
-  imageContainer: {
-    position: "relative",
-    height: 160,
-    borderRadius: 24,
-    overflow: "hidden",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  favoriteIcon: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    backgroundColor: "rgba(255,255,255,0.9)",
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  content: {
-    paddingVertical: 12,
-    paddingHorizontal: 4,
-  },
-  title: {
-    fontSize: 16,
-    fontFamily: "Outfit_600SemiBold",
-    color: COLORS.text,
-    marginBottom: 4,
-  },
-  footer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+    gap: 16,
   },
   metaItem: {
     flexDirection: "row",
@@ -201,8 +92,165 @@ export const recipeCardStyles = StyleSheet.create({
     gap: 4,
   },
   metaText: {
-    fontSize: 12,
-    fontFamily: "Inter_400Regular",
+    fontSize: 14,
+    color: COLORS.white,
+    fontWeight: "600",
+  },
+  recipesSection: {
+    paddingHorizontal: 16,
+    marginTop: 8,
+  },
+  sectionHeader: {
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: COLORS.text,
+    letterSpacing: -0.5,
+  },
+  recipesGrid: {
+    gap: 16,
+  },
+  row: {
+    justifyContent: "space-between",
+    gap: 16,
+  },
+  emptyState: {
+    alignItems: "center",
+    paddingVertical: 64,
+    paddingHorizontal: 32,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: COLORS.text,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyDescription: {
+    fontSize: 14,
     color: COLORS.textLight,
+    textAlign: "center",
+  },
+  categoryFilterContainer: {
+    marginVertical: 16,
+  },
+  categoryFilterScrollContent: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  categoryButton: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS.card,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    minWidth: 80,
+    shadowColor: COLORS.shadow,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  selectedCategory: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+    shadowOpacity: 0.15,
+  },
+  categoryImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginBottom: 4,
+    backgroundColor: COLORS.border,
+  },
+  selectedCategoryImage: {
+    borderWidth: 2,
+    borderColor: COLORS.white,
+  },
+  categoryText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: COLORS.text,
+    textAlign: "center",
+  },
+  selectedCategoryText: {
+    color: COLORS.white,
+  },
+});
+
+export const recipeCardStyles = StyleSheet.create({
+  container: {
+    width: cardWidth,
+    backgroundColor: COLORS.card,
+    borderRadius: 16,
+    marginBottom: 16,
+    shadowColor: COLORS.shadow,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    overflow: "hidden",
+  },
+  imageContainer: {
+    position: "relative",
+    height: 140,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: COLORS.border,
+  },
+  content: {
+    padding: 12,
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: COLORS.text,
+    marginBottom: 4,
+    lineHeight: 20,
+  },
+  description: {
+    fontSize: 12,
+    color: COLORS.textLight,
+    marginBottom: 8,
+    lineHeight: 16,
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  timeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  timeText: {
+    fontSize: 11,
+    color: COLORS.textLight,
+    marginLeft: 4,
+    fontWeight: "500",
+  },
+  servingsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  servingsText: {
+    fontSize: 11,
+    color: COLORS.textLight,
+    marginLeft: 4,
+    fontWeight: "500",
   },
 });
