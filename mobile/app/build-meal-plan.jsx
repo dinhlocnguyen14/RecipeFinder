@@ -16,6 +16,7 @@ import { COLORS } from "../constants/colors";
 import { useUser } from "@clerk/clerk-expo";
 import * as mealAPI from "../services/mealAPI";
 import * as groceriesAPI from "../services/groceriesAPI";
+import { useMealPlanStore } from "../store/useMealPlanStore";
 
 // Mock Data with REAL TheMealDB integer IDs so we can fetch real ingredients dynamically!
 const MOCK_RECIPES = [
