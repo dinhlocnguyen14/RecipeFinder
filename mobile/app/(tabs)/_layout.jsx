@@ -45,6 +45,15 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
+        name="meal-plan"
+        options={{
+          title: "Meal Plan",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="restaurant-outline" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="favorites"
         options={{
           title: "Favorites",

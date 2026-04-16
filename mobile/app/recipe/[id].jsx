@@ -27,6 +27,8 @@ const RecipeDetailScreen = () => {
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [stats, setStats] = useState(null);
+  const [activeSegment, setActiveSegment] = useState("Ingredients");
+  const [isCooked, setIsCooked] = useState(false);
 
   useEffect(() => {
     loadRecipeDetails();
@@ -179,33 +181,70 @@ const RecipeDetailScreen = () => {
             </View>
           </View>
 
-          {/* Ingredients Section */}
-          <View style={recipeDetailStyles.sectionContainer}>
-            <Text style={recipeDetailStyles.sectionTitle}>Ingredients</Text>
-            {getIngredients().map((item, index) => (
-              <View key={index} style={recipeDetailStyles.ingredientCard}>
-                <View style={recipeDetailStyles.ingredientNumber}>
-                  <Text style={recipeDetailStyles.ingredientNumberText}>{index + 1}</Text>
-                </View>
-                <Text style={recipeDetailStyles.ingredientText}>
-                  {item.measure} {item.ingredient}
-                </Text>
-              </View>
+          {/* Segmented Control */}
+          <View style={recipeDetailStyles.segmentContainer}>
+            {["Cookware", "Ingredients", "Instructions"].map((tab) => (
+              <TouchableOpacity
+                key={tab}
+                style={[
+                  recipeDetailStyles.segmentButton,
+                  activeSegment === tab && recipeDetailStyles.segmentButtonActive
+                ]}
+                onPress={() => setActiveSegment(tab)}
+              >
+                <Text style={[
+                  recipeDetailStyles.segmentText,
+                  activeSegment === tab && recipeDetailStyles.segmentTextActive
+                ]}>{tab}</Text>
+              </TouchableOpacity>
             ))}
           </View>
 
-          {/* Instructions Section */}
-          <View style={recipeDetailStyles.sectionContainer}>
-            <Text style={recipeDetailStyles.sectionTitle}>Instructions</Text>
-            <Text style={recipeDetailStyles.instructionText}>
-              {recipe.strInstructions}
-            </Text>
-          </View>
+          {/* Dynamic Segment Content */}
+          {activeSegment === "Cookware" && (
+            <View style={recipeDetailStyles.sectionContainer}>
+              <Text style={recipeDetailStyles.instructionText}>
+                • Large Skillet or Pan{"\n"}• Cutting Board{"\n"}• Chef's Knife{"\n"}• Measuring Spoons{"\n"}• Serving Bowls
+              </Text>
+            </View>
+          )}
+
+          {activeSegment === "Ingredients" && (
+            <View style={recipeDetailStyles.sectionContainer}>
+              {getIngredients().map((item, index) => (
+                <View key={index} style={recipeDetailStyles.ingredientCard}>
+                  <Text style={recipeDetailStyles.ingredientName}>{item.ingredient}</Text>
+                  <Text style={recipeDetailStyles.ingredientMeasure}>{item.measure}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {activeSegment === "Instructions" && (
+            <View style={recipeDetailStyles.sectionContainer}>
+              <Text style={recipeDetailStyles.instructionText}>
+                {recipe.strInstructions}
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
 
-      {/* Sticky Bottom Button */}
+      {/* Sticky Bottom Segmented Footer */}
       <View style={recipeDetailStyles.stickyFooter}>
+        <TouchableOpacity 
+          style={recipeDetailStyles.cookedCheckbox}
+          onPress={() => setIsCooked(!isCooked)}
+        >
+          <View style={[
+            recipeDetailStyles.checkboxCircle,
+            isCooked && { backgroundColor: COLORS.primary, borderColor: COLORS.primary }
+          ]}>
+            {isCooked && <Ionicons name="checkmark" size={16} color={COLORS.white} />}
+          </View>
+          <Text style={recipeDetailStyles.cookedText}>Cooked?</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity 
           style={recipeDetailStyles.startCookingButton}
           onPress={handleStartCooking}
