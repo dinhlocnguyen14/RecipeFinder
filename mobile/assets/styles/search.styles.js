@@ -1,129 +1,94 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { COLORS } from "../../constants/colors";
+
+const { width } = Dimensions.get("window");
+const cardWidth = (width - 48) / 2;
 
 export const searchStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  searchSection: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
   },
-  searchContainer: {
+  title: {
+    fontSize: 28,
+    fontFamily: "Outfit_700Bold",
+    color: COLORS.text,
+    marginBottom: 20,
+  },
+  searchBarContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.card,
-    borderRadius: 16,
+    backgroundColor: "#F5F5F5",
+    borderRadius: 30,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    shadowColor: COLORS.shadow,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  searchIcon: {
-    marginRight: 12,
+    height: 56,
   },
   searchInput: {
     flex: 1,
+    marginLeft: 12,
     fontSize: 16,
+    fontFamily: "Inter_400Regular",
     color: COLORS.text,
   },
-  clearButton: {
-    padding: 4,
+  content: {
+    paddingHorizontal: 20,
   },
-  quickFilters: {
-    marginTop: 20,
-  },
-  filterLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: COLORS.text,
-    marginBottom: 12,
-  },
-  filterButtons: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  quickFilterButton: {
-    backgroundColor: COLORS.card,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  activeQuickFilter: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-  },
-  quickFilterText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: COLORS.text,
-  },
-  activeQuickFilterText: {
-    color: COLORS.white,
-  },
-  resultsSection: {
-    flex: 1,
-    paddingHorizontal: 16,
-    marginTop: 8,
-  },
-  resultsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-    marginTop: 16,
-  },
-  resultsTitle: {
+  sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "Outfit_600SemiBold",
     color: COLORS.text,
-    flex: 1,
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  historyContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  historyItem: {
+    backgroundColor: "#F5F5F5",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  historyText: {
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
+    color: COLORS.text,
   },
   resultsCount: {
     fontSize: 14,
+    fontFamily: "Inter_400Regular",
     color: COLORS.textLight,
-    fontWeight: "500",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  recipesGrid: {
-    gap: 16,
-    paddingBottom: 32,
+    marginBottom: 20,
   },
   row: {
     justifyContent: "space-between",
+    marginBottom: 16,
   },
   emptyState: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 64,
+    justifyContent: "center",
+    paddingTop: 100,
   },
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontFamily: "Outfit_600SemiBold",
     color: COLORS.text,
     marginTop: 16,
-    marginBottom: 8,
   },
-  emptyDescription: {
+  emptySubtitle: {
     fontSize: 14,
+    fontFamily: "Inter_400Regular",
     color: COLORS.textLight,
+    marginTop: 8,
     textAlign: "center",
-    lineHeight: 20,
+    paddingHorizontal: 40,
   },
 });
