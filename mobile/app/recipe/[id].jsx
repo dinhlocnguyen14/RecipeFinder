@@ -18,6 +18,10 @@ import * as mealAPI from "../../services/mealAPI";
 import * as favoritesAPI from "../../services/favoritesAPI";
 import { useUser } from "@clerk/clerk-expo";
 import { getRecipeStats } from "../../utils/recipeUtils";
+import ActionMenuModal from "../../components/modals/ActionMenuModal";
+import FeedbackModal from "../../components/modals/FeedbackModal";
+import CollectionsModal from "../../components/modals/CollectionsModal";
+import NotesModal from "../../components/modals/NotesModal";
 
 const RecipeDetailScreen = () => {
   const { id } = useLocalSearchParams();
@@ -29,6 +33,12 @@ const RecipeDetailScreen = () => {
   const [stats, setStats] = useState(null);
   const [activeSegment, setActiveSegment] = useState("Ingredients");
   const [isCooked, setIsCooked] = useState(false);
+  
+  // Modal States
+  const [actionMenuVisible, setActionMenuVisible] = useState(false);
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [collectionsVisible, setCollectionsVisible] = useState(false);
+  const [notesVisible, setNotesVisible] = useState(false);
 
   useEffect(() => {
     loadRecipeDetails();
@@ -105,6 +115,18 @@ const RecipeDetailScreen = () => {
     );
   };
 
+  const handleActionSelect = (actionId) => {
+    setActionMenuVisible(false);
+    // Add brief delay to avoid modal overlap glitch
+    setTimeout(() => {
+      if (actionId === "feedback") setFeedbackVisible(true);
+      else if (actionId === "collections") setCollectionsVisible(true);
+      else if (actionId === "notes") setNotesVisible(true);
+      else if (actionId === "share") onShare();
+      else if (actionId === "cookingMode") handleStartCooking();
+    }, 300);
+  };
+
   if (loading || !recipe || !stats) {
     return (
       <View style={[recipeDetailStyles.container, { justifyContent: "center", alignItems: "center" }]}>
@@ -134,18 +156,9 @@ const RecipeDetailScreen = () => {
             >
               <Ionicons name="chevron-back" size={24} color={COLORS.white} />
             </TouchableOpacity>
-            <View style={{ flexDirection: "row", gap: 12 }}>
-              <TouchableOpacity style={recipeDetailStyles.floatingButton} onPress={onShare}>
-                <Ionicons name="share-outline" size={22} color={COLORS.white} />
-              </TouchableOpacity>
-              <TouchableOpacity style={recipeDetailStyles.floatingButton} onPress={toggleFavorite}>
-                <Ionicons 
-                  name={isFavorite ? "heart" : "heart-outline"} 
-                  size={22} 
-                  color={isFavorite ? COLORS.heart : COLORS.white} 
-                />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={recipeDetailStyles.floatingButton} onPress={() => setActionMenuVisible(true)}>
+              <Ionicons name="ellipsis-horizontal" size={22} color={COLORS.white} />
+            </TouchableOpacity>
           </View>
 
           {/* Title Info */}
@@ -252,6 +265,38 @@ const RecipeDetailScreen = () => {
           <Text style={recipeDetailStyles.startCookingText}>Start Cooking</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Modals Ecosystem */}
+      <ActionMenuModal 
+        visible={actionMenuVisible} 
+        onClose={() => setActionMenuVisible(false)} 
+        onActionSelect={handleActionSelect} 
+      />
+      <FeedbackModal 
+        visible={feedbackVisible} 
+        onClose={() => setFeedbackVisible(false)} 
+        onSubmit={(data) => {
+          setFeedbackVisible(false);
+          // In a real app, send to API, here we just alert (toast fallback)
+          Alert.alert("Feedback Received. Thanks!");
+        }}
+      />
+      <CollectionsModal 
+        visible={collectionsVisible} 
+        onClose={() => setCollectionsVisible(false)} 
+        onSave={(data) => {
+          setCollectionsVisible(false);
+          // E.g. Add to multiple remote collections
+          toggleFavorite(); // fallback mapped to simple favorite action
+        }}
+      />
+      <NotesModal 
+        visible={notesVisible} 
+        onClose={() => setNotesVisible(false)} 
+        onSave={(data) => {
+          // Send notes to API
+        }}
+      />
     </View>
   );
 };

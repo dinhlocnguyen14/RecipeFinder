@@ -29,27 +29,30 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="home-outline" size={24} color={color} />
-          ),
+          href: null, // Hide from Tab bar
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
-          title: "Search",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="search-outline" size={24} color={color} />
-          ),
+          href: null, // Hide from Tab bar
         }}
       />
       <Tabs.Screen
         name="meal-plan"
         options={{
           title: "Meal Plan",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="restaurant-outline" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "restaurant" : "restaurant-outline"} size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="groceries"
+        options={{
+          title: "Groceries",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "basket" : "basket-outline"} size={24} color={color} />
           ),
         }}
       />
@@ -57,8 +60,17 @@ const TabsLayout = () => {
         name="favorites"
         options={{
           title: "Favorites",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="heart-outline" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "heart" : "heart-outline"} size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "settings" : "settings-outline"} size={24} color={color} />
           ),
         }}
       />
