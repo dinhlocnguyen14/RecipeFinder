@@ -16,6 +16,7 @@ import { Image } from "react-native";
 import React from "react";
 import { authStyles } from "../../assets/styles/auth.style";
 import { COLORS } from "../../constants/colors";
+import VerifyEmail from "./verify-email";
 
 const SignUpScreen = () => {
   const router = useRouter();
@@ -25,6 +26,7 @@ const SignUpScreen = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [pendingVerification, setPendingVerification] = useState(false);
 
   const handleSignUp = async () => {
     if (!email || !password) {
@@ -44,7 +46,7 @@ const SignUpScreen = () => {
 
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
 
-      router.push("/(auth)/verify-email");
+      setPendingVerification(true);
     } catch (err) {
       Alert.alert("Error", err.errors?.[0]?.message || "Sign up failed");
       console.warn(JSON.stringify(err, null, 2));
@@ -52,6 +54,12 @@ const SignUpScreen = () => {
       setLoading(false);
     }
   };
+
+  if (pendingVerification) {
+    return (
+      <VerifyEmail email={email} onBack={() => setPendingVerification(false)} />
+    );
+  }
 
   return (
     <View style={authStyles.container}>

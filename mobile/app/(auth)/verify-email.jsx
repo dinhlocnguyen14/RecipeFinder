@@ -14,8 +14,9 @@ import {
 import React from "react";
 import { authStyles } from "../../assets/styles/auth.style";
 import { COLORS } from "../../constants/colors";
+import { Image } from "react-native";
 
-const VerifyEmailScreen = () => {
+const VerifyEmail = ({ email, onBack }) => {
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
 
@@ -41,11 +42,12 @@ const VerifyEmailScreen = () => {
         await setActive({ session: completeSignUp.createdSessionId });
         router.replace("/(tabs)");
       } else {
-        console.error(JSON.stringify(completeSignUp, null, 2));
+        Alert.alert("Error", "Verification failed. Please try again.");
+        console.warn(JSON.stringify(completeSignUp, null, 2));
       }
     } catch (err) {
       Alert.alert("Error", err.errors?.[0]?.message || "Verification failed");
-      console.error(JSON.stringify(err, null, 2));
+      console.warn(JSON.stringify(err, null, 2));
     } finally {
       setLoading(false);
     }
@@ -56,14 +58,22 @@ const VerifyEmailScreen = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={authStyles.keyboardView}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
           contentContainerStyle={authStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          <View style={authStyles.imageContainer}>
+            <Image
+              source={require("../../assets/images/logo.png")}
+              style={authStyles.image}
+              resizeMode="contain"
+            />
+          </View>
           <Text style={authStyles.title}>Verify Email</Text>
           <Text style={authStyles.subtitle}>
-            Enter the verification code sent to your email
+            Enter the verification code sent to {email}
           </Text>
 
           <View style={authStyles.formContainer}>
@@ -75,6 +85,7 @@ const VerifyEmailScreen = () => {
                 value={code}
                 onChangeText={setCode}
                 keyboardType="number-pad"
+                maxLength={6}
               />
             </View>
 
@@ -91,6 +102,12 @@ const VerifyEmailScreen = () => {
                 {loading ? "Verifying..." : "Verify"}
               </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={authStyles.linkContainer} onPress={onBack}>
+              <Text style={authStyles.linkText}>
+                <Text style={authStyles.link}>Back to Sign Up</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -98,4 +115,4 @@ const VerifyEmailScreen = () => {
   );
 };
 
-export default VerifyEmailScreen;
+export default VerifyEmail;
