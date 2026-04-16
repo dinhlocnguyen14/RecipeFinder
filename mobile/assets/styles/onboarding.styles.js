@@ -13,22 +13,48 @@ export const onboardingStyles = StyleSheet.create({
     height: "100%",
     position: "absolute",
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.45)",
+  header: {
+    position: "absolute",
+    top: 60,
+    right: 20,
+    zIndex: 10,
+  },
+  skipText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 16,
+    color: COLORS.white,
+  },
+  slide: {
+    width: width,
+    flex: 1,
     justifyContent: "flex-end",
+  },
+  overlay: {
+    backgroundColor: "rgba(0,0,0,0.55)",
+    width: "100%",
     padding: 32,
     paddingBottom: 60,
-  },
-  content: {
     alignItems: "center",
   },
+  paginationContainer: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 24,
+  },
+  dot: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "rgba(255,255,255,0.4)",
+  },
+  activeDot: {
+    backgroundColor: COLORS.primary,
+  },
   title: {
-    fontSize: 48,
+    fontSize: 40,
     fontFamily: "Outfit_700Bold",
     color: COLORS.white,
     textAlign: "center",
-    lineHeight: 56,
+    lineHeight: 48,
     marginBottom: 16,
   },
   subtitle: {
@@ -38,7 +64,7 @@ export const onboardingStyles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 24,
     marginBottom: 40,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   button: {
     backgroundColor: COLORS.primary,

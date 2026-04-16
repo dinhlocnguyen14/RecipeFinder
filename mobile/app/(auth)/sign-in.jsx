@@ -1,5 +1,6 @@
-import { useSignIn } from "@clerk/clerk-expo";
+import { useSignIn, useOAuth } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import { useState } from "react";
 import {
   View,
@@ -18,6 +19,8 @@ import React from "react";
 import { authStyles } from "../../assets/styles/auth.style";
 import { COLORS } from "../../constants/colors";
 
+WebBrowser.maybeCompleteAuthSession();
+
 const SignInScreen = () => {
   const router = useRouter();
 
@@ -27,6 +30,21 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { startOAuthFlow: startGoogleOAuth } = useOAuth({ strategy: "oauth_google" });
+
+  const handleGoogleAuth = async () => {
+    try {
+      const { createdSessionId, setActive } = await startGoogleOAuth();
+      if (createdSessionId) {
+        await setActive({ session: createdSessionId });
+        router.replace("/(tabs)");
+      }
+    } catch (err) {
+      console.warn("OAuth error", err);
+      Alert.alert("Authentication Error", "Could not sign in with Google.");
+    }
+  };
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -118,6 +136,16 @@ const SignInScreen = () => {
               </TouchableOpacity>
             </View>
 
+            {/* Forgot Password Link */}
+            <TouchableOpacity
+              style={{ alignSelf: "flex-end", marginBottom: 20 }}
+              onPress={() => router.push("/(auth)/forgot-password")}
+            >
+              <Text style={{ fontFamily: "Inter_600SemiBold", color: COLORS.primary, fontSize: 13 }}>
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               style={[
                 authStyles.authButton,
@@ -141,11 +169,16 @@ const SignInScreen = () => {
 
             {/* Social Buttons */}
             <View style={{ flexDirection: "row", gap: 16, marginBottom: 30 }}>
-              <TouchableOpacity style={{ flex: 1, height: 56, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border, justifyContent: "center", alignItems: "center", flexDirection: "row", gap: 8 }}>
+              <TouchableOpacity 
+                onPress={handleGoogleAuth}
+                style={{ flex: 1, height: 56, backgroundColor: COLORS.white, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border, justifyContent: "center", alignItems: "center", flexDirection: "row", gap: 8 }}
+              >
                 <Ionicons name="logo-google" size={20} color={COLORS.text} />
                 <Text style={{ fontFamily: "Inter_600SemiBold", color: COLORS.text }}>Google</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{ flex: 1, height: 56, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border, justifyContent: "center", alignItems: "center", flexDirection: "row", gap: 8 }}>
+              <TouchableOpacity 
+                style={{ flex: 1, height: 56, backgroundColor: COLORS.white, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border, justifyContent: "center", alignItems: "center", flexDirection: "row", gap: 8 }}
+              >
                 <Ionicons name="logo-apple" size={22} color={COLORS.text} />
                 <Text style={{ fontFamily: "Inter_600SemiBold", color: COLORS.text }}>Apple</Text>
               </TouchableOpacity>
