@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../../constants/colors";
 
-const NotesModal = ({ visible, onClose, onSave }) => {
-  const [note, setNote] = useState("");
+const NotesModal = ({ visible, onClose, onSave, initialNote = "" }) => {
+  const [note, setNote] = useState(initialNote);
+
+  useEffect(() => {
+    if (visible) {
+      setNote(initialNote);
+    }
+  }, [visible, initialNote]);
 
   const handleSave = () => {
     onSave(note);

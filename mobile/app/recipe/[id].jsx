@@ -18,6 +18,7 @@ import * as mealAPI from "../../services/mealAPI";
 import * as favoritesAPI from "../../services/favoritesAPI";
 import { useUser } from "@clerk/clerk-expo";
 import { getRecipeStats } from "../../utils/recipeUtils";
+import * as notesAPI from "../../services/notesAPI";
 import ActionMenuModal from "../../components/modals/ActionMenuModal";
 import FeedbackModal from "../../components/modals/FeedbackModal";
 import CollectionsModal from "../../components/modals/CollectionsModal";
@@ -39,12 +40,26 @@ const RecipeDetailScreen = () => {
   const [feedbackVisible, setFeedbackVisible] = useState(false);
   const [collectionsVisible, setCollectionsVisible] = useState(false);
   const [notesVisible, setNotesVisible] = useState(false);
+  
+  const [currentNote, setCurrentNote] = useState("");
 
   useEffect(() => {
     loadRecipeDetails();
     checkIfFavorite();
+    if (user?.id) loadExistingNote();
     setStats(getRecipeStats(id));
-  }, [id]);
+  }, [id, user?.id]);
+
+  const loadExistingNote = async () => {
+    try {
+      const notesArray = await notesAPI.getNotes(user.id, id);
+      if (notesArray && notesArray.length > 0) {
+        setCurrentNote(notesArray[0].content);
+      }
+    } catch (error) {
+      console.error("Failed to load note");
+    }
+  };
 
   const loadRecipeDetails = async () => {
     setLoading(true);
@@ -293,8 +308,16 @@ const RecipeDetailScreen = () => {
       <NotesModal 
         visible={notesVisible} 
         onClose={() => setNotesVisible(false)} 
-        onSave={(data) => {
-          // Send notes to API
+        initialNote={currentNote}
+        onSave={async (newNote) => {
+          if (!user) return Alert.alert("Error", "Please sign in to save notes.");
+          try {
+            await notesAPI.saveNote(user.id, id, newNote);
+            setCurrentNote(newNote); // update UI
+            Alert.alert("Success", "Note saved securely! 📝");
+          } catch (error) {
+            Alert.alert("Error", "Could not save your note.");
+          }
         }}
       />
     </View>

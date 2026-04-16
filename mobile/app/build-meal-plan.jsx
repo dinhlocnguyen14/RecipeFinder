@@ -13,66 +13,98 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { COLORS } from "../constants/colors";
-import { useMealPlanStore } from "../store/useMealPlanStore";
+import { useUser } from "@clerk/clerk-expo";
+import * as mealAPI from "../services/mealAPI";
+import * as groceriesAPI from "../services/groceriesAPI";
 
-// Dummy Data
+// Mock Data with REAL TheMealDB integer IDs so we can fetch real ingredients dynamically!
 const MOCK_RECIPES = [
   {
-    id: "r1",
-    title: "Brussels Sprouts, Mashed Potato & Sausage Bowl",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
+    id: 52772,
+    title: "Teriyaki Chicken Casserole",
+    image: "https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg",
     time: "35 min",
   },
   {
-    id: "r2",
-    title: "Roasted Cauliflower & Black Bean Burrito Bowl",
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80",
+    id: 52874,
+    title: "Beef and Mustard Pie",
+    image: "https://www.themealdb.com/images/media/meals/sytuqu1511553755.jpg",
     time: "40 min",
   },
   {
-    id: "r3",
-    title: "Creamy Cashew & Zucchini Noodles",
-    image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&q=80",
+    id: 52836,
+    title: "Seafood stew",
+    image: "https://www.themealdb.com/images/media/meals/spswqs1511558697.jpg",
     time: "20 min",
   },
 ];
 
 const MOCK_RECENT = [
   {
-    id: "r4",
-    title: "Indian Butter Chicken with Basmati Rice",
-    image: "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400&q=80",
+    id: 52928,
+    title: "BeaverTails",
+    image: "https://www.themealdb.com/images/media/meals/ryppsv1511815505.jpg",
     time: "50 min",
   },
   {
-    id: "r5",
-    title: "Greek Salad with Feta Cheese & Olives",
-    image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80",
+    id: 52893,
+    title: "Apple & Blackberry Crumble",
+    image: "https://www.themealdb.com/images/media/meals/xvsurr1511719182.jpg",
     time: "15 min",
   },
 ];
 
 const MOCK_RECOMMENDED = [
   {
-    id: "r6",
-    title: "Spicy Tofu Stir Fry with Mixed Veggies",
-    image: "https://images.unsplash.com/photo-1511690656952-34342bb7c152?w=400&q=80",
+    id: 52878,
+    title: "Beef and Oyster pie",
+    image: "https://www.themealdb.com/images/media/meals/wrssjt1511556544.jpg",
     time: "25 min",
   },
   {
-    id: "r7",
-    title: "Grilled Salmon with Lemon Butter Sauce",
-    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80",
+    id: 52784,
+    title: "Smoky Lentil Chili",
+    image: "https://www.themealdb.com/images/media/meals/uwxqwy1483389553.jpg",
     time: "30 min",
   },
 ];
 
 const BuildMealPlanScreen = () => {
   const router = useRouter();
+  const { user } = useUser();
   const { addMeal, plannedMeals } = useMealPlanStore();
 
-  const handleAddToPlan = (recipe) => {
+  const handleAddToPlan = async (recipe) => {
+    // 1. Instantly Update Local Store UI
     addMeal(recipe);
+
+    if (!user) return;
+    try {
+      // 2. Persist Meal Plan to Backend DB
+      await mealAPI.saveMealPlan(user.id, recipe.id, recipe.title, recipe.image);
+
+      // 3. Auto-Fetch Real Ingredients from TheMealDB using the valid ID
+      const fullDetails = await mealAPI.fetchRecipeDetails(recipe.id);
+      
+      if (fullDetails) {
+        const generatedGroceries = [];
+        for (let i = 1; i <= 20; i++) {
+          if (fullDetails[`strIngredient${i}`] && fullDetails[`strIngredient${i}`].trim() !== "") {
+            generatedGroceries.push({
+              ingredient: fullDetails[`strIngredient${i}`],
+              measure: fullDetails[`strMeasure${i}`] || "",
+            });
+          }
+        }
+        
+        // 4. Magic-Add all ingredients directly to the Groceries Database Cart!
+        if (generatedGroceries.length > 0) {
+          await groceriesAPI.autoAddGroceries(user.id, recipe.id, generatedGroceries);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to sequence save operations", error);
+    }
   };
 
   const renderRecipeCard = ({ item }) => {
