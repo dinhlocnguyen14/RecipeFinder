@@ -4,17 +4,26 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
 
-// Mock Data
-const INITIAL_COLLECTIONS = [
-  { id: "c1", name: "Healthy", count: 2, image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&q=80" },
-  { id: "c2", name: "Japanese", count: 5, image: "https://images.unsplash.com/photo-1580828369119-22a014a0a5ad?w=200&q=80" },
-];
+import { useUser } from "@clerk/clerk-expo";
+import * as collectionsAPI from "../../services/collectionsAPI";
 
 const CollectionsModal = ({ visible, onClose, onSave }) => {
+  const { user } = useUser();
   const [view, setView] = useState("list"); // 'list' | 'add'
-  const [collections, setCollections] = useState(INITIAL_COLLECTIONS);
-  const [selectedIds, setSelectedIds] = useState(["c1"]);
+  const [collections, setCollections] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [newCollectionName, setNewCollectionName] = useState("");
+
+  React.useEffect(() => {
+    if (visible && user) {
+      loadCollections();
+    }
+  }, [visible, user]);
+
+  const loadCollections = async () => {
+    const data = await collectionsAPI.getCollections(user.id);
+    setCollections(data);
+  };
 
   const toggleSelection = (id) => {
     if (selectedIds.includes(id)) {
@@ -24,18 +33,19 @@ const CollectionsModal = ({ visible, onClose, onSave }) => {
     }
   };
 
-  const handleCreateCollection = () => {
-    if (newCollectionName.trim() === "") return;
-    const newCol = {
-      id: Math.random().toString(),
-      name: newCollectionName,
-      count: 0,
-      image: "https://images.unsplash.com/photo-1495147466023-e6a920216b5a?w=200&q=80", // placeholder
-    };
-    setCollections((prev) => [...prev, newCol]);
-    setSelectedIds((prev) => [...prev, newCol.id]);
-    setNewCollectionName("");
-    setView("list");
+  const handleCreateCollection = async () => {
+    if (newCollectionName.trim() === "" || !user) return;
+    try {
+      const placeholderImage = "https://images.unsplash.com/photo-1495147466023-e6a920216b5a?w=200&q=80";
+      const newCol = await collectionsAPI.createCollection(user.id, newCollectionName, placeholderImage);
+      
+      setCollections((prev) => [...prev, { ...newCol, count: 0 }]);
+      setSelectedIds((prev) => [...prev, newCol.id]);
+      setNewCollectionName("");
+      setView("list");
+    } catch (e) {
+      console.error("Failed to create collection");
+    }
   };
 
   const renderSelectionList = () => (

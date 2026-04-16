@@ -5,12 +5,15 @@ import { COLORS } from "../../constants/colors";
 import { useUser } from "@clerk/clerk-expo";
 import * as groceriesAPI from "../../services/groceriesAPI";
 import { useRouter } from "expo-router";
+import ShopOnlineModal from "../../components/modals/ShopOnlineModal";
 
 const GroceriesScreen = () => {
   const { user } = useUser();
   const router = useRouter();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [shopOnlineVisible, setShopOnlineVisible] = useState(false);
+  const [showAlert, setShowAlert] = useState(true);
 
   useEffect(() => {
     fetchGroceries();
@@ -72,13 +75,33 @@ const GroceriesScreen = () => {
     </TouchableOpacity>
   );
 
+  const renderAllergenWarning = () => {
+    if (!showAlert) return null;
+    return (
+      <View style={styles.alertContainer}>
+        <Text style={styles.alertTitle}>Allergen Warning</Text>
+        <Text style={styles.alertMessage}>
+          Ingredients with a ⚠️ symbol may contain allergens. Tap an ingredient for more details, and make sure to purchase an allergen-free variety.
+        </Text>
+        <TouchableOpacity style={styles.alertButton} onPress={() => setShowAlert(false)}>
+          <Text style={styles.alertButtonText}>Got It!</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Groceries</Text>
-        {items.length > 0 && (
-          <Text style={styles.itemCount}>{items.filter(i => !i.isChecked).length} items left</Text>
-        )}
+        <View>
+          <Text style={styles.headerTitle}>Groceries</Text>
+          {items.length > 0 && (
+            <Text style={styles.itemCount}>{items.filter(i => !i.isChecked).length} items left</Text>
+          )}
+        </View>
+        <TouchableOpacity onPress={() => router.push("/add-grocery")}>
+          <Ionicons name="add" size={28} color={COLORS.text} />
+        </TouchableOpacity>
       </View>
 
       {loading ? (
@@ -88,14 +111,24 @@ const GroceriesScreen = () => {
       ) : items.length === 0 ? (
         renderEmptyState()
       ) : (
-        <FlatList
-          data={items}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-        />
+        <View style={{ flex: 1 }}>
+          <FlatList
+            data={items}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={renderAllergenWarning}
+          />
+          <View style={styles.stickyFooter}>
+            <TouchableOpacity style={styles.shopOnlineButton} onPress={() => setShopOnlineVisible(true)}>
+              <Text style={styles.shopOnlineButtonText}>Shop Online</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
+
+      <ShopOnlineModal visible={shopOnlineVisible} onClose={() => setShopOnlineVisible(false)} />
     </SafeAreaView>
   );
 };
@@ -209,6 +242,53 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_600SemiBold",
     color: COLORS.white,
     fontSize: 16,
+  },
+  alertContainer: {
+    backgroundColor: "#F46252", // Red warning color from Figma
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 24,
+  },
+  alertTitle: {
+    fontFamily: "Outfit_700Bold",
+    fontSize: 18,
+    color: COLORS.white,
+    marginBottom: 8,
+  },
+  alertMessage: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 14,
+    color: COLORS.white,
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  alertButton: {
+    backgroundColor: COLORS.white,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  alertButtonText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 14,
+    color: "#F46252",
+  },
+  stickyFooter: {
+    padding: 16,
+    backgroundColor: COLORS.white,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  shopOnlineButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 16,
+    borderRadius: 30,
+    alignItems: "center",
+  },
+  shopOnlineButtonText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 16,
+    color: COLORS.white,
   },
 });
 

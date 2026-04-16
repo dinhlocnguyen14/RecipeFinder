@@ -16,6 +16,7 @@ import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles";
 import { COLORS } from "../../constants/colors";
 import * as mealAPI from "../../services/mealAPI";
 import * as favoritesAPI from "../../services/favoritesAPI";
+import * as collectionsAPI from "../../services/collectionsAPI";
 import { useUser } from "@clerk/clerk-expo";
 import { getRecipeStats } from "../../utils/recipeUtils";
 import * as notesAPI from "../../services/notesAPI";
@@ -123,11 +124,7 @@ const RecipeDetailScreen = () => {
   };
 
   const handleStartCooking = () => {
-    Alert.alert(
-      "Let's Cook!",
-      "Follow the instructions carefully. Enjoy your cooking session! 👩‍🍳",
-      [{ text: "Got it!" }]
-    );
+    router.push({ pathname: "/cooking-mode", params: { id } });
   };
 
   const handleActionSelect = (actionId) => {
@@ -299,10 +296,18 @@ const RecipeDetailScreen = () => {
       <CollectionsModal 
         visible={collectionsVisible} 
         onClose={() => setCollectionsVisible(false)} 
-        onSave={(data) => {
+        onSave={async (selectedIds) => {
           setCollectionsVisible(false);
-          // E.g. Add to multiple remote collections
-          toggleFavorite(); // fallback mapped to simple favorite action
+          try {
+            await Promise.all(
+              selectedIds.map((colId) => 
+                collectionsAPI.addRecipeToCollection(colId, id, recipe.strMeal, recipe.strMealThumb)
+              )
+            );
+            Alert.alert("Success", "Recipe magically added to collections! ✨");
+          } catch (e) {
+            Alert.alert("Error", "Could not add to collections.");
+          }
         }}
       />
       <NotesModal 

@@ -1,152 +1,188 @@
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  Image,
-  StatusBar,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import { useAuth, useUser, useClerk } from "@clerk/clerk-expo";
-import { favoritesStyles } from "../../assets/styles/favorites.styles";
-import { recipeCardStyles } from "../../assets/styles/home.styles";
-import { COLORS } from "../../constants/colors";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import * as favoritesAPI from "../../services/favoritesAPI";
+import { Image } from "expo-image";
+import { COLORS } from "../../constants/colors";
 import { useRouter } from "expo-router";
-
-const FavoriteCard = ({ item, onPress, onRemove }) => (
-  <TouchableOpacity
-    style={recipeCardStyles.container}
-    onPress={() => onPress(item)}
-    activeOpacity={0.9}
-  >
-    <View style={recipeCardStyles.imageContainer}>
-      <Image source={{ uri: item.image }} style={recipeCardStyles.image} />
-      <TouchableOpacity 
-        style={recipeCardStyles.favoriteIcon}
-        onPress={() => onRemove(item.recipeId)}
-      >
-        <Ionicons name="heart" size={18} color={COLORS.heart} />
-      </TouchableOpacity>
-    </View>
-    <View style={recipeCardStyles.content}>
-      <Text style={recipeCardStyles.title} numberOfLines={1}>
-        {item.title}
-      </Text>
-      <View style={recipeCardStyles.footer}>
-        <View style={recipeCardStyles.metaItem}>
-          <Ionicons name="time-outline" size={14} color={COLORS.textLight} />
-          <Text style={recipeCardStyles.metaText}>{item.cookTime || "30 min"}</Text>
-        </View>
-        <View style={recipeCardStyles.metaItem}>
-          <Ionicons name="flame-outline" size={14} color={COLORS.textLight} />
-          <Text style={recipeCardStyles.metaText}>320 cal</Text>
-        </View>
-      </View>
-    </View>
-  </TouchableOpacity>
-);
+import { useUser } from "@clerk/clerk-expo";
+import * as favoritesAPI from "../../services/favoritesAPI";
 
 const FavoritesScreen = () => {
-  const { user } = useUser();
-  const { signOut } = useClerk();
   const router = useRouter();
+  const { user } = useUser();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) loadFavorites();
-  }, [user]);
+    fetchFavorites();
+  }, [user?.id]);
 
-  const loadFavorites = async () => {
+  const fetchFavorites = async () => {
+    if (!user) return;
     setLoading(true);
     const data = await favoritesAPI.getFavorites(user.id);
-    setFavorites(data);
+    setFavorites(data || []);
     setLoading(false);
   };
 
-  const handleLogout = async () => {
-    await signOut();
-    router.replace("/(auth)/sign-in");
-  };
+  const renderFavoriteCard = ({ item }) => (
+    <TouchableOpacity 
+      style={styles.cardContainer} 
+      onPress={() => router.push(`/recipe/${item.recipeId}`)}
+      activeOpacity={0.8}
+    >
+      <View style={styles.imageWrapper}>
+        <Image source={{ uri: item.image }} style={styles.recipeImage} />
+        {/* Heart Icon Badge overlay for the favorite visual cue */}
+        <View style={styles.heartBadge}>
+          <Ionicons name="heart" size={16} color="#F46252" />
+        </View>
+      </View>
+      <Text style={styles.recipeTitle} numberOfLines={3}>{item.title}</Text>
+    </TouchableOpacity>
+  );
 
-  const handleRemove = async (recipeId) => {
-    const success = await favoritesAPI.removeFavorite(user.id, recipeId);
-    if (success) {
-      setFavorites(prev => prev.filter(fav => fav.recipeId !== recipeId));
-    }
-  };
-
-  const onRecipePress = (fav) => {
-    router.push(`/recipe/${fav.recipeId}`);
-  };
+  const renderEmptyState = () => (
+    <View style={styles.emptyStateContainer}>
+      <Ionicons name="heart-outline" size={80} color={COLORS.border} style={styles.icon} />
+      <Text style={styles.title}>No favorites yet</Text>
+      <Text style={styles.subtitle}>
+        Tap the heart icon on recipes you love to save them here for later.
+      </Text>
+      <TouchableOpacity style={styles.actionButton} onPress={() => router.push("/")}>
+        <Text style={styles.actionButtonText}>Discover Recipes</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <View style={favoritesStyles.container}>
-      <StatusBar barStyle="dark-content" />
-      <View style={favoritesStyles.header}>
-        <Text style={favoritesStyles.title}>My Taste</Text>
-        <TouchableOpacity style={favoritesStyles.logoutButton} onPress={handleLogout}>
-          <Ionicons name="log-out-outline" size={22} color={COLORS.primary} />
-        </TouchableOpacity>
-      </View>
-
-      <View style={favoritesStyles.statsContainer}>
-        <View style={favoritesStyles.statCard}>
-          <View style={[favoritesStyles.statIcon, { backgroundColor: COLORS.primary + "15" }]}>
-            <Ionicons name="heart" size={24} color={COLORS.primary} />
-          </View>
-          <Text style={favoritesStyles.statValue}>{favorites.length}</Text>
-          <Text style={favoritesStyles.statLabel}>Favorites</Text>
-        </View>
-        <View style={favoritesStyles.statCard}>
-          <View style={[favoritesStyles.statIcon, { backgroundColor: "#FFB800" + "15" }]}>
-            <Ionicons name="star" size={24} color="#FFB800" />
-          </View>
-          <Text style={favoritesStyles.statValue}>4.8</Text>
-          <Text style={favoritesStyles.statLabel}>Avg Rating</Text>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Favorites</Text>
       </View>
 
       {loading ? (
-        <View style={{ flex: 1, justifyContent: "center" }}>
+        <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
+      ) : favorites.length === 0 ? (
+        renderEmptyState()
       ) : (
         <FlatList
           data={favorites}
+          renderItem={renderFavoriteCard}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
-          contentContainerStyle={favoritesStyles.recipesSection}
-          columnWrapperStyle={favoritesStyles.row}
-          refreshing={loading}
-          onRefresh={loadFavorites}
-          renderItem={({ item }) => (
-            <FavoriteCard item={item} onPress={onRecipePress} onRemove={handleRemove} />
-          )}
-          ListEmptyComponent={
-            <View style={favoritesStyles.emptyState}>
-              <View style={favoritesStyles.emptyIconContainer}>
-                <Ionicons name="heart-outline" size={64} color={COLORS.border} />
-              </View>
-              <Text style={favoritesStyles.emptyTitle}>Empty Plate?</Text>
-              <Text style={favoritesStyles.emptySubtitle}>
-                You haven't saved any recipes yet. Start exploring and find your favorite dishes!
-              </Text>
-              <TouchableOpacity 
-                style={favoritesStyles.exploreButton}
-                onPress={() => router.push("/(tabs)")}
-              >
-                <Text style={favoritesStyles.exploreButtonText}>Discover Recipes</Text>
-              </TouchableOpacity>
-            </View>
-          }
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          columnWrapperStyle={styles.row}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+  },
+  headerTitle: {
+    fontFamily: "Outfit_700Bold",
+    fontSize: 28,
+    color: COLORS.text,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 30,
+  },
+  row: {
+    justifyContent: "space-between",
+  },
+  cardContainer: {
+    width: "48%", // For 2 column grid
+    marginBottom: 20,
+  },
+  imageWrapper: {
+    width: "100%",
+    aspectRatio: 1, // Make it a perfect square
+    borderRadius: 20,
+    overflow: "hidden",
+    marginBottom: 10,
+    backgroundColor: COLORS.background,
+  },
+  recipeImage: {
+    width: "100%",
+    height: "100%",
+  },
+  heartBadge: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    backgroundColor: COLORS.white,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  recipeTitle: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 14,
+    color: COLORS.text,
+    lineHeight: 20,
+  },
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 32,
+    paddingBottom: 80,
+  },
+  icon: {
+    marginBottom: 24,
+  },
+  title: {
+    fontFamily: "Outfit_700Bold",
+    fontSize: 24,
+    color: COLORS.text,
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  subtitle: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 16,
+    color: COLORS.textLight,
+    textAlign: "center",
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  actionButton: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 30,
+  },
+  actionButtonText: {
+    fontFamily: "Inter_600SemiBold",
+    color: COLORS.white,
+    fontSize: 16,
+  },
+});
 
 export default FavoritesScreen;

@@ -1,7 +1,7 @@
 import express from "express";
 import { ENV } from "./config/env.js";
 import { db } from "./config/db.js";
-import { favoritesTable, notesTable, groceriesTable, mealPlanTable } from "./db/schema.js";
+import { favoritesTable, notesTable, groceriesTable, mealPlanTable, collectionsTable, collectionRecipesTable } from "./db/schema.js";
 import { and, eq } from "drizzle-orm";
 import job from "./config/cron.js";
 
@@ -224,6 +224,76 @@ app.delete("/api/groceries/:id", async (req, res) => {
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(500).json({ error: "Failed to delete" });
+  }
+});
+
+// ================= COLLECTIONS API =================
+app.get("/api/collections/:userId", async (req, res) => {
+  try {
+    const list = await db
+      .select()
+      .from(collectionsTable)
+      .where(eq(collectionsTable.userId, req.params.userId));
+      
+    // Fetch recipe counts for each collection
+    const enhancedList = await Promise.all(list.map(async (col) => {
+      const recs = await db.select().from(collectionRecipesTable).where(eq(collectionRecipesTable.collectionId, col.id));
+      return { ...col, count: recs.length, image: recs[0]?.image || col.image };
+    }));
+      
+    res.status(200).json(enhancedList);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch collections" });
+  }
+});
+
+app.post("/api/collections", async (req, res) => {
+  try {
+    const { userId, name, image } = req.body;
+    if (!userId || !name) return res.status(400).json({ error: "Missing fields" });
+
+    const newCol = await db
+      .insert(collectionsTable)
+      .values({ userId, name, image })
+      .returning();
+    res.status(201).json(newCol[0]);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create collection" });
+  }
+});
+
+app.post("/api/collections/recipes", async (req, res) => {
+  try {
+    const { collectionId, recipeId, title, image } = req.body;
+    if (!collectionId || !recipeId) return res.status(400).json({ error: "Missing fields" });
+
+    // Ensure it's not already in the collection
+    const existing = await db
+      .select()
+      .from(collectionRecipesTable)
+      .where(and(eq(collectionRecipesTable.collectionId, collectionId), eq(collectionRecipesTable.recipeId, parseInt(recipeId))));
+      
+    if (existing.length > 0) return res.status(200).json(existing[0]);
+
+    const newRec = await db
+      .insert(collectionRecipesTable)
+      .values({ collectionId, recipeId, title, image })
+      .returning();
+    res.status(201).json(newRec[0]);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add recipe to collection" });
+  }
+});
+
+app.delete("/api/collections/:collectionId/recipes/:recipeId", async (req, res) => {
+  try {
+    const { collectionId, recipeId } = req.params;
+    await db
+      .delete(collectionRecipesTable)
+      .where(and(eq(collectionRecipesTable.collectionId, parseInt(collectionId)), eq(collectionRecipesTable.recipeId, parseInt(recipeId))));
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to remove recipe" });
   }
 });
 

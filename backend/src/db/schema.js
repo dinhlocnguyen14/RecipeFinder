@@ -37,3 +37,19 @@ export const mealPlanTable = pgTable("meal_plans", {
   image: text("image"),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const collectionsTable = pgTable("collections", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  name: text("name").notNull(),
+  image: text("image"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const collectionRecipesTable = pgTable("collection_recipes", {
+  id: serial("id").primaryKey(),
+  collectionId: integer("collection_id").notNull(),
+  recipeId: integer("recipe_id").notNull(),
+  title: text("title"),
+  image: text("image"),
+});
