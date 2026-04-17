@@ -5,6 +5,7 @@ import { COLORS } from "../../constants/colors";
 
 const ACTIONS = [
   { id: "nutrition", title: "Nutrition Facts", icon: "information-circle-outline" },
+  { id: "mealPlan", title: "Add To Meal Plan", icon: "calendar-outline" },
   { id: "cookingMode", title: "Open Cooking Mode", icon: "restaurant-outline" },
   { id: "notes", title: "Add Notes", icon: "document-text-outline" },
   { id: "share", title: "Share", icon: "share-social-outline" },

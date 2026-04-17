@@ -90,13 +90,18 @@ const HomeScreen = () => {
 
   const loadInitialData = async () => {
     setLoading(true);
+    const categories = ["Seafood", "Chicken", "Beef", "Vegetarian", "Pasta"];
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+    
     const [cats, random] = await Promise.all([
       mealAPI.fetchCategories(),
-      mealAPI.fetchRecipesByCategory("Seafood"),
+      mealAPI.fetchRecipesByCategory(randomCategory),
     ]);
     setCategories(cats);
     if (random && random.length > 0) {
-      setFeaturedRecipe(random[0]);
+      // Pick a random recipe from the random category
+      const randomIndex = Math.floor(Math.random() * Math.min(random.length, 10));
+      setFeaturedRecipe(random[randomIndex]);
     }
   };
 

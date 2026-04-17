@@ -18,62 +18,46 @@ import * as mealAPI from "../services/mealAPI";
 import * as groceriesAPI from "../services/groceriesAPI";
 import { useMealPlanStore } from "../store/useMealPlanStore";
 
-// Mock Data with REAL TheMealDB integer IDs so we can fetch real ingredients dynamically!
-const MOCK_RECIPES = [
-  {
-    id: 52772,
-    title: "Teriyaki Chicken Casserole",
-    image: "https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg",
-    time: "35 min",
-  },
-  {
-    id: 52874,
-    title: "Beef and Mustard Pie",
-    image: "https://www.themealdb.com/images/media/meals/sytuqu1511553755.jpg",
-    time: "40 min",
-  },
-  {
-    id: 52836,
-    title: "Seafood stew",
-    image: "https://www.themealdb.com/images/media/meals/spswqs1511558697.jpg",
-    time: "20 min",
-  },
-];
-
-const MOCK_RECENT = [
-  {
-    id: 52928,
-    title: "BeaverTails",
-    image: "https://www.themealdb.com/images/media/meals/ryppsv1511815505.jpg",
-    time: "50 min",
-  },
-  {
-    id: 52893,
-    title: "Apple & Blackberry Crumble",
-    image: "https://www.themealdb.com/images/media/meals/xvsurr1511719182.jpg",
-    time: "15 min",
-  },
-];
-
-const MOCK_RECOMMENDED = [
-  {
-    id: 52878,
-    title: "Beef and Oyster pie",
-    image: "https://www.themealdb.com/images/media/meals/wrssjt1511556544.jpg",
-    time: "25 min",
-  },
-  {
-    id: 52784,
-    title: "Smoky Lentil Chili",
-    image: "https://www.themealdb.com/images/media/meals/uwxqwy1483389553.jpg",
-    time: "30 min",
-  },
-];
-
 const BuildMealPlanScreen = () => {
   const router = useRouter();
   const { user } = useUser();
   const { addMeal, plannedMeals } = useMealPlanStore();
+  
+  const [popularRecipes, setPopularRecipes] = useState([]);
+  const [recentRecipes, setRecentRecipes] = useState([]);
+  const [recommendedRecipes, setRecommendedRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadDynamicRecipes();
+  }, []);
+
+  const loadDynamicRecipes = async () => {
+    setLoading(true);
+    try {
+      const [popular, recent, recommended] = await Promise.all([
+        mealAPI.fetchRecipesByCategory("Chicken"),
+        mealAPI.fetchRecipesByCategory("Beef"),
+        mealAPI.fetchRecipesByCategory("Seafood"),
+      ]);
+
+      // Normalize data: Rename idMeal to id and strMeal to title, strMealThumb to image for UI consistency
+      const normalize = (list) => list.map(m => ({
+        id: parseInt(m.idMeal),
+        title: m.strMeal,
+        image: m.strMealThumb,
+        time: "30 min", // Fallback time
+      }));
+
+      setPopularRecipes(normalize(popular).slice(0, 6));
+      setRecentRecipes(normalize(recent).slice(0, 6));
+      setRecommendedRecipes(normalize(recommended).slice(0, 6));
+    } catch (error) {
+      console.error("Failed to load recipes for builder");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddToPlan = async (recipe) => {
     // 1. Instantly Update Local Store UI
@@ -164,9 +148,15 @@ const BuildMealPlanScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <Text style={styles.pageTitle}>Build a meal plan</Text>
 
-        {renderHorizontalSection("Most Popular", MOCK_RECIPES)}
-        {renderHorizontalSection("Recently Created", MOCK_RECENT)}
-        {renderHorizontalSection("Recommended Plan", MOCK_RECOMMENDED)}
+        {loading ? (
+          <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 50 }} />
+        ) : (
+          <>
+            {renderHorizontalSection("Most Popular (Chicken)", popularRecipes)}
+            {renderHorizontalSection("Recent Favorites (Beef)", recentRecipes)}
+            {renderHorizontalSection("Recommended (Seafood)", recommendedRecipes)}
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

@@ -35,6 +35,7 @@ const RecipeDetailScreen = () => {
   const [stats, setStats] = useState(null);
   const [activeSegment, setActiveSegment] = useState("Ingredients");
   const [isCooked, setIsCooked] = useState(false);
+  const [isPlanned, setIsPlanned] = useState(false);
   
   // Modal States
   const [actionMenuVisible, setActionMenuVisible] = useState(false);
@@ -47,6 +48,7 @@ const RecipeDetailScreen = () => {
   useEffect(() => {
     loadRecipeDetails();
     checkIfFavorite();
+    checkIfPlanned();
     if (user?.id) loadExistingNote();
     setStats(getRecipeStats(id));
   }, [id, user?.id]);
@@ -74,6 +76,40 @@ const RecipeDetailScreen = () => {
     const favorites = await favoritesAPI.getFavorites(user.id);
     const found = favorites.find((fav) => fav.recipeId === parseInt(id));
     setIsFavorite(!!found);
+  };
+
+  const checkIfPlanned = async () => {
+    if (!user) return;
+    const plans = await mealAPI.getMealPlans(user.id);
+    const found = plans.find((p) => p.recipeId === parseInt(id));
+    setIsPlanned(!!found);
+  };
+
+  const toggleMealPlan = async () => {
+    if (!user) return Alert.alert("Sign In", "Please sign in to manage your meal plan.");
+
+    try {
+      if (isPlanned) {
+        await mealAPI.deleteMealPlan(user.id, id);
+        setIsPlanned(false);
+        Alert.alert("Removed", "Recipe removed from your meal plan.");
+      } else {
+        await mealAPI.saveMealPlan(user.id, parseInt(id), recipe.strMeal, recipe.strMealThumb);
+        setIsPlanned(true);
+
+        // Auto-add ingredients to groceries
+        const ingredients = getIngredients();
+        if (ingredients.length > 0) {
+          await groceriesAPI.autoAddGroceries(user.id, parseInt(id), ingredients);
+          Alert.alert("Success", "Added to meal plan! Ingredients also added to your groceries list. 🛒");
+        } else {
+          Alert.alert("Success", "Added to meal plan! ✨");
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling meal plan:", error);
+      Alert.alert("Error", "Could not update meal plan.");
+    }
   };
 
   const toggleFavorite = async () => {
@@ -134,6 +170,7 @@ const RecipeDetailScreen = () => {
       if (actionId === "feedback") setFeedbackVisible(true);
       else if (actionId === "collections") setCollectionsVisible(true);
       else if (actionId === "notes") setNotesVisible(true);
+      else if (actionId === "mealPlan") toggleMealPlan();
       else if (actionId === "share") onShare();
       else if (actionId === "cookingMode") handleStartCooking();
     }, 300);
