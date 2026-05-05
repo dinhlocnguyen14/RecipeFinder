@@ -109,6 +109,14 @@ export const homeStyles = StyleSheet.create({
     color: COLORS.text,
     letterSpacing: -0.5,
   },
+  categoryTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: COLORS.text,
+    letterSpacing: -0.5,
+    marginLeft: 16,
+    marginBottom: 12,
+  },
   recipesGrid: {
     gap: 16,
   },
