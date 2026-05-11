@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   View,
   Text,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,8 +12,10 @@ import {
 import { authStyles } from "../../assets/styles/auth.styles";
 import { Image } from "expo-image";
 import { COLORS } from "../../constants/colors";
+import { useToast } from "../../hooks/useToast";
 const VerifyEmail = ({ email, onBack }) => {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { showToast, ToastComponent } = useToast();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -30,11 +31,11 @@ const VerifyEmail = ({ email, onBack }) => {
       if (signUpAttempt.status === "complete") {
         await setActive({ session: signUpAttempt.createdSessionId });
       } else {
-        Alert.alert("Error", "Verification failed. Please try again.");
+        showToast("Verification failed. Please try again.", "error");
         console.error(JSON.stringify(signUpAttempt, null, 2));
       }
     } catch (err) {
-      Alert.alert("Error", err.errors?.[0]?.message || "Verification failed");
+      showToast(err.errors?.[0]?.message || "Verification failed.", "error");
       console.error(JSON.stringify(err, null, 2));
     } finally {
       setLoading(false);
@@ -43,6 +44,7 @@ const VerifyEmail = ({ email, onBack }) => {
 
   return (
     <View style={authStyles.container}>
+      {ToastComponent}
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={authStyles.keyboardView}

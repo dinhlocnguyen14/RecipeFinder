@@ -7,6 +7,7 @@ import {
   FlatList,
 } from "react-native";
 import { MealAPI } from "../../services/mealAPI";
+import { UserRecipeAPI } from "../../services/userRecipeAPI";
 import { useDebounce } from "../../hooks/useDebounce";
 import { searchStyles } from "../../assets/styles/search.styles";
 import { COLORS } from "../../constants/colors";
@@ -32,19 +33,25 @@ const SearchScreen = () => {
     }
 
     // search by name first, then by ingredient if no results
+    const [nameResults, userResults] = await Promise.all([
+      MealAPI.searchMealsByName(query),
+      UserRecipeAPI.searchRecipes(query),
+    ]);
 
-    const nameResults = await MealAPI.searchMealsByName(query);
     let results = nameResults;
 
-    if (results.length === 0) {
+    if (results.length === 0 && userResults.length === 0) {
       const ingredientResults = await MealAPI.filterByIngredient(query);
       results = ingredientResults;
     }
 
-    return results
+    const transformedMeals = results
       .slice(0, 12)
       .map((meal) => MealAPI.transformMealData(meal))
       .filter((meal) => meal !== null);
+
+    // Combine results (user recipes first)
+    return [...userResults, ...transformedMeals];
   };
 
   useEffect(() => {

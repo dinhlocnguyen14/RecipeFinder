@@ -1,4 +1,15 @@
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+} from "react-native";
 import React, { useState } from "react";
 import { useUser } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
@@ -7,13 +18,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { createStyles } from "../../assets/styles/create.styles";
 import { COLORS } from "../../constants/colors";
+import { API_URL } from "../../constants/api";
 import { Image } from "expo-image";
 import { UserRecipeAPI } from "../../services/userRecipeAPI";
+import { useToast } from "../../hooks/useToast";
 
 const CreateRecipe = () => {
   const { user } = useUser();
   const router = useRouter();
-  
+  const { showToast, ToastComponent } = useToast();
+
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -41,17 +55,18 @@ const CreateRecipe = () => {
 
   const handleSubmit = async () => {
     if (!title || !ingredients || !instructions) {
-      Alert.alert("Error", "Please fill in all required fields (Title, Ingredients, and Instructions)");
+      showToast(
+        "Please add a title, ingredients, and instructions ",
+        "warning",
+      );
       return;
     }
 
-    if (youtubeUrl && !/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(youtubeUrl)) {
-      Alert.alert("Error", "Please enter a valid YouTube link");
-      return;
-    }
-
-    if (!user) {
-      Alert.alert("Error", "You must be logged in to create a recipe");
+    if (
+      youtubeUrl &&
+      !/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(youtubeUrl)
+    ) {
+      showToast("That YouTube link doesn't look right ", "warning");
       return;
     }
 
@@ -69,9 +84,15 @@ const CreateRecipe = () => {
         youtubeUrl,
       });
 
-      Alert.alert("Success", "Your recipe has been shared!", [
-        { text: "OK", onPress: () => router.replace("/") }
-      ]);
+      showToast(
+        "Yay! Your recipe has been shared with the community! ",
+        "success",
+      );
+
+      // Delay redirect to let user see success toast
+      setTimeout(() => {
+        router.replace("/(tabs)");
+      }, 1500);
       // Clear form
       setTitle("");
       setCategory("");
@@ -83,17 +104,21 @@ const CreateRecipe = () => {
       setYoutubeUrl("");
     } catch (error) {
       console.error("Error creating recipe", error);
-      Alert.alert("Error", error.message || "Could not save your recipe. Please try again.");
+      showToast(
+        error.message || "Something went wrong. Let's try saving that again ",
+        "error",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={createStyles.container}
     >
+      {ToastComponent}
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={createStyles.header}>
           <Text style={createStyles.headerTitle}>Create Recipe</Text>
@@ -103,13 +128,26 @@ const CreateRecipe = () => {
           {/* IMAGE PICKER */}
           <View style={createStyles.inputGroup}>
             <Text style={createStyles.label}>Recipe Photo</Text>
-            <TouchableOpacity style={createStyles.imagePicker} onPress={pickImage}>
+            <TouchableOpacity
+              style={createStyles.imagePicker}
+              onPress={pickImage}
+            >
               {image ? (
-                <Image source={{ uri: image }} style={createStyles.previewImage} contentFit="cover" />
+                <Image
+                  source={{ uri: image }}
+                  style={createStyles.previewImage}
+                  contentFit="cover"
+                />
               ) : (
                 <View style={createStyles.imagePickerPlaceholder}>
-                  <Ionicons name="camera-outline" size={40} color={COLORS.textLight} />
-                  <Text style={createStyles.placeholderText}>Add a photo of your dish</Text>
+                  <Ionicons
+                    name="camera-outline"
+                    size={40}
+                    color={COLORS.textLight}
+                  />
+                  <Text style={createStyles.placeholderText}>
+                    Add a photo of your dish
+                  </Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -191,11 +229,35 @@ const CreateRecipe = () => {
 
           {/* YOUTUBE LINK */}
           <View style={createStyles.inputGroup}>
-            <Text style={createStyles.label}>YouTube Tutorial Link (Optional)</Text>
-            <View style={[createStyles.input, { flexDirection: 'row', alignItems: 'center', height: 55, paddingHorizontal: 12, paddingVertical: 0 }]}>
-              <Ionicons name="logo-youtube" size={24} color="#FF0000" style={{ marginRight: 10 }} />
+            <Text style={createStyles.label}>
+              YouTube Tutorial Link (Optional)
+            </Text>
+            <View
+              style={[
+                createStyles.input,
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  height: 55,
+                  paddingHorizontal: 12,
+                  paddingVertical: 0,
+                },
+              ]}
+            >
+              <Ionicons
+                name="logo-youtube"
+                size={24}
+                color="#FF0000"
+                style={{ marginRight: 10 }}
+              />
               <TextInput
-                style={{ flex: 1, height: '100%', color: COLORS.text, fontSize: 16, padding: 0 }}
+                style={{
+                  flex: 1,
+                  height: "100%",
+                  color: COLORS.text,
+                  fontSize: 16,
+                  padding: 0,
+                }}
                 placeholder="Example: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                 value={youtubeUrl}
                 onChangeText={setYoutubeUrl}
@@ -204,11 +266,87 @@ const CreateRecipe = () => {
                 placeholderTextColor={COLORS.textLight}
               />
             </View>
+            {(() => {
+              const regex =
+                /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|shorts\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+              const match = youtubeUrl.match(regex);
+              const videoId = match ? match[1] : null;
+              if (videoId) {
+                return (
+                  <View
+                    style={{
+                      marginTop: 12,
+                      borderRadius: 16,
+                      overflow: "hidden",
+                      height: 180,
+                      backgroundColor: COLORS.card,
+                      borderWidth: 1,
+                      borderColor: COLORS.border + "40",
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                      }}
+                      style={{ width: "100%", height: "100%" }}
+                      contentFit="cover"
+                    />
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: 10,
+                        right: 10,
+                        backgroundColor: "rgba(0,0,0,0.7)",
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        borderRadius: 6,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          fontSize: 12,
+                          fontWeight: "700",
+                        }}
+                      >
+                        Video Preview
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        ...StyleSheet.absoluteFillObject,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: 50,
+                          height: 50,
+                          borderRadius: 25,
+                          backgroundColor: "rgba(255,0,0,0.8)",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Ionicons
+                          name="play"
+                          size={24}
+                          color="white"
+                          style={{ marginLeft: 3 }}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                );
+              }
+              return null;
+            })()}
           </View>
 
           {/* SUBMIT BUTTON */}
-          <TouchableOpacity 
-            style={createStyles.submitButton} 
+          <TouchableOpacity
+            style={createStyles.submitButton}
             onPress={handleSubmit}
             disabled={loading}
           >
@@ -220,7 +358,11 @@ const CreateRecipe = () => {
                 <ActivityIndicator color={COLORS.white} />
               ) : (
                 <>
-                  <Ionicons name="cloud-upload" size={24} color={COLORS.white} />
+                  <Ionicons
+                    name="cloud-upload"
+                    size={24}
+                    color={COLORS.white}
+                  />
                   <Text style={createStyles.submitText}>Publish Recipe</Text>
                 </>
               )}

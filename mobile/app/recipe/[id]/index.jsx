@@ -1,4 +1,12 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+} from "react-native";
+import { useState, useMemo } from "react";
 import { useRecipe } from "./_layout";
 import { recipeDetailStyles } from "../../../assets/styles/recipe-detail.styles";
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,21 +16,20 @@ import { WebView } from "react-native-webview";
 
 export default function OverviewScreen() {
   const { recipe } = useRecipe();
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const getYouTubeEmbedUrl = (url) => {
-    if (!url) return "";
-    let videoId = "";
-    // Regex supports: watch?v=, youtu.be/, embed/, v/, and shorts/
+  const videoId = useMemo(() => {
+    if (!recipe?.youtubeUrl) return null;
     const regex =
       /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|shorts\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
-    const match = url.match(regex);
-    if (match && match[1]) {
-      videoId = match[1];
-    }
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
-  };
+    const match = recipe.youtubeUrl.match(regex);
+    return match ? match[1] : null;
+  }, [recipe?.youtubeUrl]);
 
-  const embedUrl = getYouTubeEmbedUrl(recipe.youtubeUrl);
+  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : "";
+  const thumbnailUrl = videoId
+    ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+    : null;
 
   return (
     <View style={recipeDetailStyles.tabContent}>
@@ -64,33 +71,61 @@ export default function OverviewScreen() {
           </View>
 
           <View style={recipeDetailStyles.videoCard}>
-            <WebView
-              style={recipeDetailStyles.webview}
-              source={{
-                uri: `${embedUrl}?modestbranding=1&rel=0&hl=vi`,
-              }}
-              allowsFullscreenVideo
-              allowsInlineMediaPlayback={true}
-              javaScriptEnabled={true}
-              domStorageEnabled={true}
-              originWhitelist={["*"]}
-              userAgent="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
-              startInLoadingState={true}
-              renderLoading={() => (
-                <View
-                  style={[
-                    recipeDetailStyles.webview,
-                    {
-                      justifyContent: "center",
-                      alignItems: "center",
-                      backgroundColor: "#000",
-                    },
-                  ]}
-                >
-                  <ActivityIndicator size="large" color={COLORS.primary} />
+            {isPlaying ? (
+              <WebView
+                style={recipeDetailStyles.webview}
+                source={{
+                  uri: `${embedUrl}?autoplay=1&modestbranding=1&rel=0&hl=vi`,
+                }}
+                allowsFullscreenVideo
+                allowsInlineMediaPlayback={true}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                originWhitelist={["*"]}
+                userAgent="Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
+                startInLoadingState={true}
+                renderLoading={() => (
+                  <View
+                    style={[
+                      recipeDetailStyles.webview,
+                      {
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#000",
+                      },
+                    ]}
+                  >
+                    <ActivityIndicator size="large" color={COLORS.primary} />
+                  </View>
+                )}
+              />
+            ) : (
+              <TouchableOpacity
+                style={recipeDetailStyles.thumbnailContainer}
+                activeOpacity={0.9}
+                onPress={() => setIsPlaying(true)}
+              >
+                {thumbnailUrl && (
+                  <Image
+                    source={{ uri: thumbnailUrl }}
+                    style={recipeDetailStyles.thumbnailImage}
+                    resizeMode="cover"
+                  />
+                )}
+                <LinearGradient
+                  colors={["rgba(0,0,0,0.3)", "transparent", "rgba(0,0,0,0.5)"]}
+                  style={StyleSheet.absoluteFill}
+                />
+                <View style={recipeDetailStyles.playButtonOverlay}>
+                  <Ionicons
+                    name="play"
+                    size={40}
+                    color={COLORS.white}
+                    style={{ marginLeft: 5 }}
+                  />
                 </View>
-              )}
-            />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       ) : recipe.youtubeUrl ? (

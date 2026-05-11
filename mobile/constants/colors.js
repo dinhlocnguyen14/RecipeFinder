@@ -97,5 +97,11 @@ export const THEMES = {
   roseGold: roseGoldTheme,
 };
 
-//  change this to switch theme
-export const COLORS = THEMES.coffee;
+// Khởi tạo COLORS như một đối tượng có thể thay đổi
+export const COLORS = { ...THEMES.coffee }; // Mặc định là theme coffee
+
+export const updateColors = (themeName) => {
+  const newTheme = THEMES[themeName] || THEMES.purple;
+  Object.assign(COLORS, newTheme);
+  return newTheme;
+};

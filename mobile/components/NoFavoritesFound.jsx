@@ -13,6 +13,9 @@ function NoFavoritesFound() {
         <Ionicons name="heart-outline" size={80} color={COLORS.textLight} />
       </View>
       <Text style={favoritesStyles.emptyTitle}>No favorites yet</Text>
+      <Text style={favoritesStyles.emptySubtitle}>
+        Start saving your favorite recipes to see them here!
+      </Text>
       <TouchableOpacity
         style={favoritesStyles.exploreButton}
         onPress={() => router.push("/")}

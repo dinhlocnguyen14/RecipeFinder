@@ -1,3 +1,4 @@
+import { useUser } from "@clerk/clerk-expo";
 import {
   View,
   Text,
@@ -6,6 +7,7 @@ import {
   FlatList,
   RefreshControl,
 } from "react-native";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { MealAPI } from "../../services/mealAPI";
@@ -21,7 +23,9 @@ import { HeaderShownContext } from "@react-navigation/elements";
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const HomeScreen = () => {
+  const { user } = useUser();
   const router = useRouter();
+
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -110,7 +114,23 @@ const HomeScreen = () => {
         }
         contentContainerStyle={homeStyles.scrollContent}
       >
-        <View style={homeStyles.welcomeSection}></View>
+        <View style={homeStyles.welcomeSection}>
+          <View>
+            <Text style={homeStyles.welcomeText}>
+              Hello, {user?.firstName || "there"}!
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                color: COLORS.textLight,
+                fontWeight: "500",
+                marginTop: 4,
+              }}
+            >
+              What would you like to cook today?
+            </Text>
+          </View>
+        </View>
 
         {/* FEATURED SECTION */}
         {featuredRecipe && (
