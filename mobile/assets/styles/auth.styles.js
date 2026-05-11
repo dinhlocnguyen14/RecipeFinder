@@ -14,12 +14,12 @@ export const authStyles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingTop: 20,
+    paddingTop: 45,
     paddingBottom: 20,
   },
   imageContainer: {
-    height: height * 0.22,
-    marginBottom: 16,
+    height: height * 0.25,
+    marginBottom: 20,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -32,7 +32,7 @@ export const authStyles = StyleSheet.create({
     fontWeight: "bold",
     color: COLORS.text,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 24,
   },
   subtitle: {
     fontSize: 15,

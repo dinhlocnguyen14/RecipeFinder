@@ -229,7 +229,7 @@ const ForgotPasswordScreen = () => {
           {/* Image */}
           <View style={authStyles.imageContainer}>
             <Image
-              source={require("../../assets/images/i1.png")}
+              source={require("../../assets/images/i3.png")}
               style={authStyles.image}
               contentFit="contain"
             />

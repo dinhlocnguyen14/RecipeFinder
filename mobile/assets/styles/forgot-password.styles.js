@@ -5,7 +5,7 @@ export const forgotPasswordStyles = StyleSheet.create({
   backButton: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 20,
     gap: 6,
   },
   backText: {
@@ -19,7 +19,7 @@ export const forgotPasswordStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: 40,
   },
   stepRow: {
     flexDirection: "row",
