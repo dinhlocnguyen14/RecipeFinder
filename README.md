@@ -10,6 +10,12 @@ Chào mừng bạn đến với tài liệu kỹ thuật của dự án **Recipe
 
 ---
 
+## Video và Figma:
+
+[**Xem video demo tại đây**](https://drive.google.com/drive/folders/19X0HcczGd7lc49aHFNHShYkI-o7m4_6e?usp=sharing)
+
+## [**Xem Figma tại đây**](https://www.figma.com/design/1WRdgzSvTBPMtwXkq8NulE/Recipe-App-UI-Kit--Community---Copy-?node-id=0-1&p=f)
+
 ### Chi tiết các luồng chính:
 
 1.  **Luồng Xác thực (Authentication)**:
@@ -148,12 +154,6 @@ Dành cho việc kiểm thử API hoặc các tính năng yêu cầu đăng nh�
 - **Mật khẩu**: `Password123!`
 
 ---
-
-## Video và Figma:
-
-[**Xem video demo tại đây**](https://drive.google.com/drive/folders/19X0HcczGd7lc49aHFNHShYkI-o7m4_6e?usp=sharing)
-
-[**Xem Figma tại đây**](https://www.figma.com/design/1WRdgzSvTBPMtwXkq8NulE/Recipe-App-UI-Kit--Community---Copy-?node-id=0-1&p=f)
 
 ## Cấu trúc thư mục (Directory Structure)
 
