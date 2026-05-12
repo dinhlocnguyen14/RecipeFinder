@@ -168,6 +168,39 @@ Dành cho việc kiểm tra cơ sở dữ liệu trên neonconsole
 - **Email**: `dinhlocbdh@gmail.com`
 - **Mật khẩu**: `Dinhloc@12345`
 
+---
+
+## 📸 Hình ảnh hoàn thiện
+
+Dưới đây là giao diện thực tế của ứng dụng trên thiết bị di động:
+
+### Màn hình Đăng nhập
+![Màn hình Đăng nhập](<Hình ảnh hoàn thiện/Login.jpg>)
+
+### Màn hình Tạo tài khoản
+![Màn hình Tạo tài khoản](<Hình ảnh hoàn thiện/Createaccount.jpg>)
+
+### Màn hình Lưu tài khoản
+![Màn hình Lưu tài khoản](<Hình ảnh hoàn thiện/Saveaccount.jpg>)
+
+### Màn hình Trang chủ
+![Màn hình Trang chủ](<Hình ảnh hoàn thiện/Homepage.jpg>)
+
+### Màn hình Tìm kiếm
+![Màn hình Tìm kiếm](<Hình ảnh hoàn thiện/Search.jpg>)
+
+### Màn hình Tạo công thức
+![Màn hình Tạo công thức](<Hình ảnh hoàn thiện/Creat.jpg>)
+
+### Màn hình Yêu thích
+![Màn hình Yêu thích](<Hình ảnh hoàn thiện/Favourite.jpg>)
+
+### Màn hình Cài đặt
+![Màn hình Cài đặt](<Hình ảnh hoàn thiện/Settings.jpg>)
+
+### Màn hình Chi tiết món ăn
+![Màn hình Chi tiết món ăn](<Hình ảnh hoàn thiện/sp(1).jpg>)
+
 ## Cấu trúc thư mục (Directory Structure)
 
 ```text
