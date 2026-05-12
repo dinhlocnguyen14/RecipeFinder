@@ -15,6 +15,9 @@ Mã sinh viên : 23810310244
 Mã sinh viên : 23810310260
 3. Nguyễn Quốc Anh (làm báo cáo)
 Mã sinh viên : 23810310253
+
+## Giới thiệu
+
 Chào mừng bạn đến với tài liệu kỹ thuật của dự án **Recipe Finder**. Đây là một ứng dụng di động Fullstack hiện đại, được thiết kế để cung cấp trải nghiệm tìm kiếm và quản lý công thức nấu ăn mượt mà và bảo mật
 
 ---
