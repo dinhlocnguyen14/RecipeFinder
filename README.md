@@ -18,7 +18,16 @@ Mã sinh viên : 23810310253
 
 ## Giới thiệu
 
-Chào mừng bạn đến với tài liệu kỹ thuật của dự án **Recipe Finder**. Đây là một ứng dụng di động Fullstack hiện đại, được thiết kế để cung cấp trải nghiệm tìm kiếm và quản lý công thức nấu ăn mượt mà và bảo mật
+Chân thành cảm ơn bạn đã quan tâm đến tài liệu kỹ thuật của dự án **Recipe Finder**. Đây là một ứng dụng di động Fullstack hiện đại, được thiết kế để cung cấp trải nghiệm tìm kiếm và quản lý công thức nấu ăn mượt mà và bảo mật.
+
+---
+
+## 🎥 Video Demo Báo Cáo
+
+Bạn có thể xem video demo chi tiết các tính năng của ứng dụng tại đây:
+[**Xem Video Demo trên Google Drive**](https://drive.google.com/drive/folders/19X0HcczGd7lc49aHFNHShYkI-o7m4_6e?usp=drive_link)
+
+---
 
 ---
 
