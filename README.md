@@ -175,42 +175,6 @@ recipeApp/
 
 ## Hình ảnh giao diện hoàn thiện
 
-### Màn hình Trang chủ
-
-![Trang chủ](Hình%20ảnh%20hoàn%20thiện/Homepage.jpg)
-
-### Màn hình Đăng nhập
-
-![Đăng nhập](Hình%20ảnh%20hoàn%20thiện/Login.jpg)
-
-### Màn hình Đăng ký tài khoản
-
-![Đăng ký tài khoản](Hình%20ảnh%20hoàn%20thiện/Createaccount.jpg)
-
-### Màn hình Tạo công thức
-
-![Tạo công thức](Hình%20ảnh%20hoàn%20thiện/Creat.jpg)
-
-### Màn hình Yêu thích
-
-![Yêu thích](Hình%20ảnh%20hoàn%20thiện/Favourite.jpg)
-
-### Màn hình Lưu tài khoản
-
-![Lưu tài khoản](Hình%20ảnh%20hoàn%20thiện/Saveaccount.jpg)
-
-### Màn hình Tìm kiếm
-
-![Tìm kiếm](Hình%20ảnh%20hoàn%20thiện/Search.jpg)
-
-### Màn hình Cài đặt
-
-![Cài đặt](Hình%20ảnh%20hoàn%20thiện/Settings.jpg)
-
-### Home Screen
-
-![Splash](<Hình%20ảnh%20hoàn%20thiện/sp(1).jpg>)
-
 <table>
     <tr>
         <td align="center">
