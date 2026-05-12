@@ -2,11 +2,20 @@
 
 ## Nhóm
 
-1. Nguyễn Đình Lộc
+1. Nguyễn Đình Lộc 
+Mã sinh viên : 23810310244
 2. Phạm Quang Linh
+Mã sinh viên : 23810310260
 3. Nguyễn Quốc Anh
-
-Chào mừng bạn đến với tài liệu kỹ thuật của dự án **Recipe Finder**. Đây là một ứng dụng di động Fullstack hiện đại, được thiết kế để cung cấp trải nghiệm tìm kiếm và quản lý công thức nấu ăn mượt mà và bảo mật.
+Mã sinh viên : 23810310253
+## Phân công công việc
+ 1. Nguyễn Đình Lộc ( Lên ý tưởng + backend) 
+Mã sinh viên : 23810310244
+2. Phạm Quang Linh (Thiết kế UX/UI + tester)
+Mã sinh viên : 23810310260
+3. Nguyễn Quốc Anh (làm báo cáo)
+Mã sinh viên : 23810310253
+Chào mừng bạn đến với tài liệu kỹ thuật của dự án **Recipe Finder**. Đây là một ứng dụng di động Fullstack hiện đại, được thiết kế để cung cấp trải nghiệm tìm kiếm và quản lý công thức nấu ăn mượt mà và bảo mật
 
 ---
 
