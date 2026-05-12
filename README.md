@@ -22,12 +22,12 @@ Chân thành cảm ơn bạn đã quan tâm đến tài liệu kỹ thuật củ
 
 ---
 
-## 🎥 Video Demo Báo Cáo
+##  Video Demo Báo Cáo
 
 Bạn có thể xem video demo chi tiết các tính năng của ứng dụng tại đây:
 [**Xem Video Demo trên Google Drive**](https://drive.google.com/drive/folders/19X0HcczGd7lc49aHFNHShYkI-o7m4_6e?usp=drive_link)
 
----
+
 
 ---
 
@@ -69,7 +69,7 @@ Server được xây dựng với kiến trúc tối giản nhưng hiệu năng 
 
 ---
 
-## 📦 Danh sách chi tiết các Package & Lệnh cài đặt
+##  Danh sách chi tiết các Package & Lệnh cài đặt
 
 ### 1. Backend Dependencies
 
@@ -179,7 +179,7 @@ Dành cho việc kiểm tra cơ sở dữ liệu trên neonconsole
 
 ---
 
-## 📸 Hình ảnh hoàn thiện
+##  Hình ảnh hoàn thiện
 
 Dưới đây là giao diện thực tế của ứng dụng trên thiết bị di động:
 
